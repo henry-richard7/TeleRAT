@@ -1,0 +1,8 @@
+opencv-python
+pyttsx3
+requests
+python-telegram-bot
+autopy
+emoji-country-flag
+easygui
+Pillow
