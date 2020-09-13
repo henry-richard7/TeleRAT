@@ -7,7 +7,7 @@ To install all the required modules use the following code:
 <b>pip install -r requirements.txt</b>
 
 # 📌Commands
-use "/commands" to show list of available commands.
+use "<b>/commands</b>" to show list of available commands.
 
 # 💡Copyrights © [Henry Richard J](https://github.com/henry-richard7)
 
