@@ -6,8 +6,11 @@ To install all the required modules use the following code:
 <br/>
 <b>pip install -r requirements.txt</b>
 
+You will need to create a new Telegram BOT follow the steps here to create one! [Follow the steps](https://core.telegram.org/bots#6-botfather)
+
+
 # 📌Commands
-use "<b>/commands</b>" to show list of available commands.
+Use "<b>/commands</b>" to show list of available commands.
 
 # 💡Copyrights © [Henry Richard J](https://github.com/henry-richard7)
 
